@@ -4,53 +4,79 @@ import matplotlib.pyplot as plt
 def center_of_gravity(x):
     '''
     Find the center of gravity of a vector, x.
-    If x=[x0,x1,...,xn], then you should return
-    c = ( 0*x0 + 1*x1 + 2*x2 + ... + n*xn ) / sum(x)
-    where n = len(x)-1.
-    
-    Recommended method: use np.arange, np.dot, and np.sum.
-    
-    @param:
-    x (array): a 1d numpy array
-    
-    @result:
-    c (scalar): x's center of gravity
     '''
-    c = 0  # change this line
+    
+    indices = np.arange(len(x))
+    c = np.dot(indices, x) / np.sum(x)
+    
     return c
 
 def matched_identity(x):
     '''
     Create an identity matrix that has the same number of rows as x has elements.
-    Hint: use len(x), and use np.eye.
-    
-    @param:
-    x (array): a 1d numpy array, of length N
-    
-    @result:
-    I (array): a 2d numpy array: an NxN identity matrix
     '''
-    I =  0 # change this line
+    
+    I = np.eye(len(x))
+    
     return I
 
 def sine_and_cosine(t_start, t_end, t_steps):
     '''
-    Create a time axis, and compute its cosine and sine.
-    Hint: use np.linspace, np.cos, and np.sin
-    
-    @param:
-    t_start (scalar): the starting time
-    t_end (scalar): the ending time
-    t_steps (scalar): length of t, x, and y
-    
-    @result:
-    t (array of length t_steps): time axis, t_start through t_end inclusive
-    x (array of length t_steps): cos(t)
-    y (array of length t_steps): sin(t)
+    Create a time axis, and compute cosine and sine values.
     '''
-    # change these lines
-    t = 0 
-    x = 0
-    y = 0
-    # end changes here
+    
+    t = np.linspace(t_start, t_end, t_steps)
+    x = np.cos(t)
+    y = np.sin(t)
+    
     return t, x, y
+
+
+# =========================
+# Example Inputs and Outputs
+# =========================
+
+# Example for center_of_gravity
+x = np.array([1, 2, 3, 4])
+
+c = center_of_gravity(x)
+
+print("Input Vector:")
+print(x)
+
+print("\nCenter of Gravity:")
+print(c)
+
+
+# Example for matched_identity
+I = matched_identity(x)
+
+print("\nIdentity Matrix:")
+print(I)
+
+
+# Example for sine_and_cosine
+t, cos_values, sin_values = sine_and_cosine(0, 2*np.pi, 100)
+
+print("\nTime Axis:")
+print(t)
+
+print("\nCosine Values:")
+print(cos_values)
+
+print("\nSine Values:")
+print(sin_values)
+
+
+# Plotting the sine and cosine waves
+plt.plot(t, cos_values, label='Cosine')
+plt.plot(t, sin_values, label='Sine')
+
+plt.xlabel('Time')
+plt.ylabel('Amplitude')
+plt.title('Sine and Cosine Waves')
+
+plt.legend()
+plt.grid(True)
+
+plt.show()
