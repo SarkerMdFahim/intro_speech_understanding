@@ -2,45 +2,77 @@ import numpy as np
 
 def major_chord(f, Fs):
     '''
-    Generate a one-half-second major chord, based at frequency f, with sampling frequency Fs.
-
-    @param:
-    f (scalar): frequency of the root tone, in Hertz
-    Fs (scalar): sampling frequency, in samples/second
-
-    @return:
-    x (array): a one-half-second waveform containing the chord
-    
-    A major chord is three notes, played at the same time:
-    (1) The root tone (f)
-    (2) A major third, i.e., four semitones above f
-    (3) A major fifth, i.e., seven semitones above f
+    Generate a one-half-second major chord.
     '''
-    raise RuntimeError("You need to write this part")
+    duration = 0.5
+    t = np.arange(0, duration, 1/Fs)
+
+    # Root tone
+    root = np.sin(2 * np.pi * f * t)
+
+    # Major third (4 semitones above)
+    major_third_freq = f * (2 ** (4/12))
+    major_third = np.sin(2 * np.pi * major_third_freq * t)
+
+    # Perfect fifth (7 semitones above)
+    perfect_fifth_freq = f * (2 ** (7/12))
+    perfect_fifth = np.sin(2 * np.pi * perfect_fifth_freq * t)
+
+    # Combine tones
+    x = root + major_third + perfect_fifth
+
+    return x
+
 
 def dft_matrix(N):
     '''
-    Create a DFT transform matrix, W, of size N.
-    
-    @param:
-    N (scalar): number of columns in the transform matrix
-    
-    @result:
-    W (NxN array): a matrix of dtype='complex' whose (k,n)^th element is:
-           W[k,n] = cos(2*np.pi*k*n/N) - j*sin(2*np.pi*k*n/N)
+    Create an NxN DFT matrix.
     '''
-    raise RuntimeError("You need to write this part")
+    n = np.arange(N)
+    k = n.reshape((N, 1))
+
+    W = np.exp(-2j * np.pi * k * n / N)
+
+    return W
+
 
 def spectral_analysis(x, Fs):
     '''
     Find the three loudest frequencies in x.
-
-    @param:
-    x (array): the waveform
-    Fs (scalar): sampling frequency (samples/second)
-
-    @return:
-    f1, f2, f3: The three loudest frequencies (in Hertz)
-      These should be sorted so f1 < f2 < f3.
     '''
-    raise RuntimeError("You need to write this part")
+    N = len(x)
+
+    # FFT
+    X = np.fft.fft(x)
+
+    # Magnitude spectrum
+    magnitude = np.abs(X)
+
+    # Frequency axis
+    freqs = np.fft.fftfreq(N, d=1/Fs)
+
+    # Keep only positive frequencies
+    positive = freqs > 0
+    freqs = freqs[positive]
+    magnitude = magnitude[positive]
+
+    # Find 3 largest peaks
+    peak_indices = np.argsort(magnitude)[-3:]
+
+    loudest_freqs = np.sort(freqs[peak_indices])
+
+    f1, f2, f3 = loudest_freqs
+
+    return f1, f2, f3
+
+
+# Example Test
+Fs = 8000
+f = 440
+
+x = major_chord(f, Fs)
+
+f1, f2, f3 = spectral_analysis(x, Fs)
+
+print("Three loudest frequencies:")
+print(f1, f2, f3)
